@@ -1,72 +1,54 @@
 r = 3
-var canvas = document.getElementById('sketchpad');
-canvas.width = innerWidth
-canvas.height = innerHeight
-if (canvas.getContext){
-    var c = canvas.getContext('2d');
-    c.lineWidth = 2*r
-}
+var can = document.getElementById('sketchpad');
+c = can.getContext('2d');
+c.lineWidth = 2*r
 function drawDot(c,x,y,size) {
     c.beginPath();
     c.arc(x, y, size, 0, Math.PI*2, true);
     c.closePath();
     c.fill();
 }
-var mouseX,mouseY,mouseDown=0;
-function sketchpad_mouseDown(e) {
-    mouseDown=1;
-    getMousePos(e)
+var X,Y,md=false;
+can.onmousedown = function(e) {
+    md=true;
+    getPos(e)
     c.beginPath()
-    c.moveTo(mouseX,mouseY)
+    c.moveTo(X,Y)
 }
-function sketchpad_mouseUp() {
-    mouseDown=0;
+window.onmouseup = function(){
+    md=false;
     c.stroke()
 }
-function sketchpad_mouseMove(e) { 
-    getMousePos(e);
-    if (mouseDown==1) { 
-        c.lineTo(mouseX,mouseY) 
+can.onmousemove= function(e){ 
+    getPos(e);
+    if (md) { 
+        c.lineTo(X,Y) 
         c.stroke()
         c.beginPath()
-        c.moveTo(mouseX,mouseY)
+        c.moveTo(X,Y)
     }
 }
-function getMousePos(e) {
-    if (e.offsetX) {
-        mouseX = e.offsetX;
-        mouseY = e.offsetY;
-    }
-    else if (e.layerX) {
-        mouseX = e.layerX;
-        mouseY = e.layerY;
-    }
-}
-canvas.addEventListener('mousedown', sketchpad_mouseDown);
-canvas.addEventListener('mousemove', sketchpad_mouseMove);
-window.addEventListener('mouseup', sketchpad_mouseUp);
 
 //Touch
 
-var touchX,touchY;
 var pathX,pathY
-function sketchpad_touchStart(e) {
+can.ontouchstart = function(e) {
     pathX=[];
     pathY=[];
-    getTouchPos(e);
-    drawDot(c,touchX,touchY,r);
-    pathX.push(touchX)
-    pathY.push(touchY)
+    getPos(e);
+    drawDot(c,X,Y,r);
+    pathX.push(X)
+    pathY.push(Y)
     e.preventDefault();
 }
-function sketchpad_touchMove(e) { 
-    getTouchPos(e);
-    drawDot(c,touchX,touchY,r); 
-    pathX.push(touchX)
-    pathY.push(touchY)
+can.ontouchmove = function(e) { 
+    getPos(e);
+    drawDot(c,X,Y,r); 
+    pathX.push(X)
+    pathY.push(Y)
     e.preventDefault();
 }
-function sketchpad_touchEnd(){
+window.ontouchend = function(){
     let l = pathX.length
     if(l===0){return;}
     c.beginPath()
@@ -76,16 +58,20 @@ function sketchpad_touchEnd(){
     }
     c.stroke()
 }
-function getTouchPos(e) {
+function getPos(e) {
     if (e.touches) {
         if (e.touches.length == 1) { // Only deal with one finger
             var touch = e.touches[0]; // Get the information for finger #1
-            touchX=touch.pageX-touch.target.offsetLeft;
-            touchY=touch.pageY-touch.target.offsetTop;
+            X=touch.pageX-touch.target.offsetLeft;
+            Y=touch.pageY-touch.target.offsetTop;
         }
     }
+    else if (e.offsetX) {
+        X = e.offsetX;
+        Y = e.offsetY;
+    }
+    else if (e.layerX) {
+        X = e.layerX;
+        Y = e.layerY;
+    }
 }
-
-canvas.addEventListener('touchstart',sketchpad_touchStart)
-canvas.addEventListener('touchmove', sketchpad_touchMove ) 
-canvas.addEventListener('touchend', sketchpad_touchEnd )
