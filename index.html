@@ -1,4 +1,18 @@
 <html>
-    <canvas id="sketchpad" width="400" height="300"></canvas>
+    <style>
+        * {
+            position: absolute;
+        }
+        .layers {
+            top: 0;
+            left: 0;
+        }
+        #glass{
+            pointer-events: none;
+            z-index: 2;
+        }
+    </style>
+    <canvas id="sketchpad" class="layers"></canvas>
+    <canvas id="glass" class="layers"></canvas>
     <script src="script.js"></script>
 </html>
