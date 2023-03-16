@@ -10,6 +10,7 @@ g.lineWidth = 2*r
 g.fillStyle = 'rgba(255,99,71,0.2)'
 g.strokeStyle = 'red'
 var X,Y,md=false;
+var X0,Y0
 var pathX,pathY
 function Dot(c,x,y,size) {
     c.beginPath();
@@ -87,8 +88,6 @@ window.addEventListener("touchend" ,function(){
     c.stroke()
 })
 }
-
-var X0,Y0
 
 function clearMode(){
 can.ontouchstart = can.onmousedown = function(e) {
